@@ -3,6 +3,8 @@ import { Box, Container, Grid, Paper, Typography } from '@mui/material';
 import GuestList from './GuestList';
 import SeatingChart from './SeatingChart';
 import TableControls from './TableControls';
+import ZoomableCanvas from './ZoomableCanvas';
+import FloorPlanManager from './FloorPlanManager';
 
 // Constants for unit conversion (1 foot = 40 pixels)
 const PIXELS_PER_FOOT = 40;
@@ -98,9 +100,14 @@ const Layout = () => {
   };
 
   const updateTableName = (tableId, newName) => {
-    setTables(tables.map(table =>
+    const updatedTables = tables.map(table =>
       table.id === tableId ? { ...table, name: newName } : table
-    ));
+    );
+    setTables(updatedTables);
+    // Update the selected table to reflect the new name
+    if (selectedTable && selectedTable.id === tableId) {
+      setSelectedTable({ ...selectedTable, name: newName });
+    }
   };
 
   const assignGuestToTable = (guestId, tableId, seatIndex) => {
@@ -157,27 +164,60 @@ const Layout = () => {
     setSpaces(spaces.filter(space => space.id !== spaceId));
   };
 
+  const handleSaveFloorPlan = (savedPlan) => {
+    // Optional: Show a success message or handle the save event
+    console.log('Floor plan saved:', savedPlan.name);
+  };
+
+  const handleLoadFloorPlan = (planData) => {
+    // Load all the data from the saved plan
+    setGuests(planData.guests || []);
+    setTables(planData.tables || []);
+    setSpaces(planData.spaces || []);
+    setWorkspaceSettings(planData.workspaceSettings || workspaceSettings);
+  };
+
+  const getCurrentFloorPlanData = () => {
+    return {
+      guests,
+      tables,
+      spaces,
+      workspaceSettings
+    };
+  };
+
   return (
-    <Box sx={{ 
-      minHeight: '100vh',
-      bgcolor: 'background.default',
-      pt: 4,
-      pb: 6
-    }}>
-      <Container maxWidth="xl">
-        <Typography 
-          variant="h4" 
-          component="h1" 
-          sx={{ 
-            mb: 4, 
-            fontWeight: 300,
+    <Box sx={{ height: '100vh', display: 'flex', flexDirection: 'column', bgcolor: 'background.default' }}>
+      <Box
+        sx={{
+          py: 4,
+          display: 'flex',
+          justifyContent: 'center',
+          alignItems: 'center',
+          borderBottom: '1px solid',
+          borderColor: 'divider',
+        }}
+      >
+        <Typography
+          variant="h4"
+          component="h1"
+          sx={{
+            fontFamily: 'Playfair Display',
             textAlign: 'center',
-            letterSpacing: '0.02em'
+            fontWeight: 500,
+            letterSpacing: '0.02em',
           }}
         >
           Dan and Michelle's Wedding
         </Typography>
-        
+      </Box>
+      
+      <Container maxWidth="xl" sx={{ flex: 1, py: 4 }}>
+        <FloorPlanManager
+          onSave={handleSaveFloorPlan}
+          onLoad={handleLoadFloorPlan}
+          currentData={getCurrentFloorPlanData()}
+        />
         <Grid container spacing={4}>
           <Grid item xs={12} md={3}>
             <Paper 
@@ -214,24 +254,26 @@ const Layout = () => {
                 variant="h6" 
                 sx={{ mb: 2, fontWeight: 500 }}
               >
-                Floor Plan
+                Seating Chart
               </Typography>
-              <SeatingChart 
-                tables={tables}
-                spaces={spaces}
-                guests={guests}
-                onAssignGuest={assignGuestToTable}
-                onUpdateTablePosition={updateTablePosition}
-                onUpdateSpacePosition={updateSpacePosition}
-                selectedTable={selectedTable}
-                selectedSpace={selectedSpace}
-                onSelectTable={setSelectedTable}
-                onSelectSpace={setSelectedSpace}
-                onUpdateGuest={updateGuest}
-                onRemoveGuest={removeGuestFromSeat}
-                onDeleteSpace={deleteSpace}
-                workspaceSettings={workspaceSettings}
-              />
+              <ZoomableCanvas>
+                <SeatingChart
+                  tables={tables}
+                  spaces={spaces}
+                  guests={guests}
+                  onAssignGuest={assignGuestToTable}
+                  onUpdateTablePosition={updateTablePosition}
+                  onUpdateSpacePosition={updateSpacePosition}
+                  selectedTable={selectedTable}
+                  selectedSpace={selectedSpace}
+                  onSelectTable={setSelectedTable}
+                  onSelectSpace={setSelectedSpace}
+                  onUpdateGuest={updateGuest}
+                  onRemoveGuest={removeGuestFromSeat}
+                  onDeleteSpace={deleteSpace}
+                  workspaceSettings={workspaceSettings}
+                />
+              </ZoomableCanvas>
             </Paper>
           </Grid>
           
@@ -259,6 +301,7 @@ const Layout = () => {
                 onDeleteSpace={deleteSpace}
                 workspaceSettings={workspaceSettings}
                 onUpdateWorkspaceSettings={updateWorkspaceSettings}
+                onSelectTable={setSelectedTable}
               />
             </Paper>
           </Grid>

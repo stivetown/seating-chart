@@ -17,7 +17,8 @@ import {
   Dialog,
   DialogTitle,
   DialogContent,
-  DialogActions
+  DialogActions,
+  InputAdornment
 } from '@mui/material';
 import DeleteIcon from '@mui/icons-material/Delete';
 import AddCircleIcon from '@mui/icons-material/AddCircle';
@@ -26,6 +27,7 @@ import EditIcon from '@mui/icons-material/Edit';
 import SaveIcon from '@mui/icons-material/Save';
 import CancelIcon from '@mui/icons-material/Cancel';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
+import AddIcon from '@mui/icons-material/Add';
 
 const TableControls = ({ 
   onAddTable, 
@@ -39,7 +41,8 @@ const TableControls = ({
   onUpdateSpace,
   onDeleteSpace,
   workspaceSettings,
-  onUpdateWorkspaceSettings
+  onUpdateWorkspaceSettings,
+  onSelectTable
 }) => {
   const [editingTableId, setEditingTableId] = useState(null);
   const [editedName, setEditedName] = useState('');
@@ -48,6 +51,12 @@ const TableControls = ({
     name: '',
     widthFeet: 15,
     heightFeet: 15
+  });
+  const [openSpaceDialog, setOpenSpaceDialog] = useState(false);
+  const [newSpace, setNewSpace] = useState({
+    name: '',
+    widthFeet: 20,
+    heightFeet: 20,
   });
 
   const handleStartEditing = (table) => {
@@ -97,9 +106,12 @@ const TableControls = ({
     onUpdateTables(updatedTables);
   };
 
-  const handleDeleteTable = (tableId) => {
-    const updatedTables = tables.filter(table => table.id !== tableId);
-    onUpdateTables(updatedTables);
+  const handleDeleteTable = () => {
+    if (selectedTable) {
+      const updatedTables = tables.filter(table => table.id !== selectedTable.id);
+      onUpdateTables(updatedTables);
+      onSelectTable(null);
+    }
   };
 
   const handleWorkspaceChange = (setting) => (event, newValue) => {
@@ -120,13 +132,19 @@ const TableControls = ({
   };
 
   const handleAddSpace = () => {
-    onAddSpace({
-      ...spaceConfig,
-      type: spaceDialog,
+    const space = {
       id: Date.now().toString(),
-      position: { x: workspaceSettings.margin, y: workspaceSettings.margin }
+      ...newSpace,
+      position: { x: workspaceSettings.margin, y: workspaceSettings.margin },
+      type: 'VENUE_SPACE'
+    };
+    onAddSpace(space);
+    setOpenSpaceDialog(false);
+    setNewSpace({
+      name: '',
+      widthFeet: 20,
+      heightFeet: 20,
     });
-    handleCloseSpaceDialog();
   };
 
   const handleUpdateSpaceDimension = (dimension) => (event, value) => {
@@ -137,253 +155,286 @@ const TableControls = ({
   };
 
   return (
-    <Box>
-      <Typography variant="h6" gutterBottom>
-        Room Setup
-      </Typography>
-      
-      <Box sx={{ mb: 3 }}>
+    <Box sx={{ height: '100%', display: 'flex', flexDirection: 'column', gap: 3 }}>
+      <Box>
+        <Typography variant="h6" sx={{ mb: 2 }}>Tables</Typography>
+        <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1 }}>
+          <Button
+            variant="outlined"
+            onClick={() => onAddTable('round')}
+            startIcon={<AddIcon />}
+          >
+            Add Round Table
+          </Button>
+          <Button
+            variant="outlined"
+            onClick={() => onAddTable('square')}
+            startIcon={<AddIcon />}
+          >
+            Add Square Table
+          </Button>
+          <Button
+            variant="outlined"
+            onClick={() => onAddTable('rectangular')}
+            startIcon={<AddIcon />}
+          >
+            Add Rectangular Table
+          </Button>
+        </Box>
+      </Box>
+
+      <Divider />
+
+      {selectedTable && (
+        <Box>
+          <Typography variant="h6" sx={{ mb: 2 }}>Selected Table</Typography>
+          <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
+            {editingTableId === selectedTable.id ? (
+              <Box sx={{ display: 'flex', gap: 1 }}>
+                <TextField
+                  fullWidth
+                  value={editedName}
+                  onChange={(e) => setEditedName(e.target.value)}
+                  size="small"
+                  variant="outlined"
+                  autoFocus
+                  inputProps={{
+                    'aria-label': 'Edit table name',
+                  }}
+                  sx={{
+                    '& .MuiOutlinedInput-root': {
+                      '& fieldset': {
+                        borderColor: 'rgba(244, 246, 240, 0.23)',
+                      },
+                      '&:hover fieldset': {
+                        borderColor: 'rgba(244, 246, 240, 0.5)',
+                      },
+                    }
+                  }}
+                />
+                <IconButton 
+                  size="small" 
+                  onClick={handleSaveName}
+                  sx={{ color: 'success.main' }}
+                >
+                  <SaveIcon />
+                </IconButton>
+                <IconButton 
+                  size="small" 
+                  onClick={handleCancelEditing}
+                  sx={{ color: 'error.main' }}
+                >
+                  <CancelIcon />
+                </IconButton>
+              </Box>
+            ) : (
+              <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                <Typography>{selectedTable.name || 'Unnamed Table'}</Typography>
+                <IconButton
+                  size="small"
+                  onClick={() => handleStartEditing(selectedTable)}
+                  sx={{ color: 'primary.main' }}
+                >
+                  <EditIcon />
+                </IconButton>
+              </Box>
+            )}
+            <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
+              <Typography>Seats: {selectedTable.seats}</Typography>
+              <Box sx={{ display: 'flex', gap: 1 }}>
+                <IconButton
+                  size="small"
+                  onClick={() => handleRemoveSeats(selectedTable.id)}
+                  disabled={selectedTable.seats <= 2}
+                  sx={{ color: 'primary.main' }}
+                >
+                  <RemoveCircleIcon />
+                </IconButton>
+                <IconButton
+                  size="small"
+                  onClick={() => handleAddSeats(selectedTable.id)}
+                  disabled={selectedTable.seats >= 12}
+                  sx={{ color: 'primary.main' }}
+                >
+                  <AddCircleIcon />
+                </IconButton>
+              </Box>
+            </Box>
+            <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+              <Typography variant="caption" color="text.secondary">
+                Type: {selectedTable.type.charAt(0).toUpperCase() + selectedTable.type.slice(1)}
+              </Typography>
+              <IconButton
+                size="small"
+                onClick={handleDeleteTable}
+                sx={{ color: 'error.main' }}
+              >
+                <DeleteIcon />
+              </IconButton>
+            </Box>
+          </Box>
+        </Box>
+      )}
+
+      <Divider />
+
+      <Box>
+        <Typography variant="h6" sx={{ mb: 2 }}>Venue Spaces</Typography>
         <Button
-          variant="contained"
-          color="primary"
           fullWidth
-          sx={{ mb: 1 }}
-          onClick={() => onAddTable('round')}
-        >
-          Add Round Table
-        </Button>
-        <Button
-          variant="contained"
-          color="primary"
-          fullWidth
-          sx={{ mb: 1 }}
-          onClick={() => onAddTable('square')}
-        >
-          Add Square Table
-        </Button>
-        <Button
-          variant="contained"
-          color="primary"
-          fullWidth
-          sx={{ mb: 1 }}
-          onClick={() => onAddTable('rectangle')}
-        >
-          Add Rectangle Table
-        </Button>
-        <Divider sx={{ my: 2 }} />
-        <Button
           variant="outlined"
-          color="primary"
-          fullWidth
-          sx={{ mb: 1 }}
-          onClick={() => handleOpenSpaceDialog('danceFloor')}
+          onClick={() => setOpenSpaceDialog(true)}
+          startIcon={<AddIcon />}
+          sx={{
+            borderRadius: 2,
+            py: 1.5,
+            borderColor: 'rgba(244, 246, 240, 0.23)',
+            color: '#F4F6F0',
+            '&:hover': {
+              borderColor: 'rgba(244, 246, 240, 0.5)',
+              backgroundColor: 'rgba(244, 246, 240, 0.05)'
+            }
+          }}
         >
-          Add Dance Floor
-        </Button>
-        <Button
-          variant="outlined"
-          color="primary"
-          fullWidth
-          sx={{ mb: 1 }}
-          onClick={() => handleOpenSpaceDialog('bandArea')}
-        >
-          Add Band/DJ Area
+          Add Space
         </Button>
       </Box>
 
-      <Accordion>
-        <AccordionSummary expandIcon={<ExpandMoreIcon />}>
-          <Typography variant="subtitle2">
-            Room Dimensions
-          </Typography>
-        </AccordionSummary>
-        <AccordionDetails>
-          <Box sx={{ px: 2 }}>
-            <Typography gutterBottom>Width: {workspaceSettings.widthFeet} ft</Typography>
-            <Slider
-              value={workspaceSettings.widthFeet}
-              onChange={handleWorkspaceChange('widthFeet')}
-              min={20}
-              max={75}
-              step={1}
-              marks={[
-                { value: 20, label: '20ft' },
-                { value: 75, label: '75ft' }
-              ]}
-              sx={{ mb: 3 }}
-            />
-            
-            <Typography gutterBottom>Length: {workspaceSettings.heightFeet} ft</Typography>
-            <Slider
-              value={workspaceSettings.heightFeet}
-              onChange={handleWorkspaceChange('heightFeet')}
-              min={15}
-              max={50}
-              step={1}
-              marks={[
-                { value: 15, label: '15ft' },
-                { value: 50, label: '50ft' }
-              ]}
-              sx={{ mb: 3 }}
-            />
-            
-            <Typography gutterBottom>Grid Size: {workspaceSettings.gridSizeFeet} ft</Typography>
-            <Slider
-              value={workspaceSettings.gridSizeFeet}
-              onChange={handleWorkspaceChange('gridSizeFeet')}
-              min={0.5}
-              max={2.5}
-              step={0.25}
-              marks={[
-                { value: 0.5, label: '0.5ft' },
-                { value: 2.5, label: '2.5ft' }
-              ]}
-              sx={{ mb: 3 }}
-            />
-            
-            <Typography gutterBottom>Margin: {workspaceSettings.marginFeet} ft</Typography>
-            <Slider
-              value={workspaceSettings.marginFeet}
-              onChange={handleWorkspaceChange('marginFeet')}
-              min={0.5}
-              max={2.5}
-              step={0.25}
-              marks={[
-                { value: 0.5, label: '0.5ft' },
-                { value: 2.5, label: '2.5ft' }
-              ]}
-            />
-          </Box>
-        </AccordionDetails>
-      </Accordion>
-
-      <Divider sx={{ my: 2 }} />
-
-      <Typography variant="subtitle2" gutterBottom>
-        Table Settings
-      </Typography>
-      
-      <List>
-        {tables.map((table) => (
-          <Box key={table.id}>
-            <ListItem
-              sx={{
-                bgcolor: selectedTable === table.id ? 'action.selected' : 'inherit',
-                borderRadius: 1,
-                mb: 1,
-                flexDirection: 'column',
-                alignItems: 'stretch',
-              }}
-            >
-              <Box sx={{ display: 'flex', alignItems: 'center', width: '100%', mb: editingTableId === table.id ? 1 : 0 }}>
-                {editingTableId === table.id ? (
-                  <TextField
-                    fullWidth
-                    size="small"
-                    value={editedName}
-                    onChange={(e) => setEditedName(e.target.value)}
-                    sx={{ mr: 1 }}
-                    autoFocus
-                  />
-                ) : (
-                  <ListItemText
-                    primary={table.name}
-                    secondary={`${table.seats} seats`}
-                    sx={{ flex: 1 }}
-                  />
-                )}
-                {editingTableId === table.id ? (
-                  <>
-                    <IconButton size="small" onClick={handleSaveName}>
-                      <SaveIcon fontSize="small" />
-                    </IconButton>
-                    <IconButton size="small" onClick={handleCancelEditing}>
-                      <CancelIcon fontSize="small" />
-                    </IconButton>
-                  </>
-                ) : (
-                  <IconButton size="small" onClick={() => handleStartEditing(table)}>
-                    <EditIcon fontSize="small" />
-                  </IconButton>
-                )}
-              </Box>
-              <Collapse in={editingTableId !== table.id}>
-                <Box sx={{ display: 'flex', justifyContent: 'flex-end', mt: 1 }}>
-                  <IconButton
-                    size="small"
-                    onClick={() => handleAddSeats(table.id)}
-                    disabled={table.seats >= 12}
-                  >
-                    <AddCircleIcon />
-                  </IconButton>
-                  <IconButton
-                    size="small"
-                    onClick={() => handleRemoveSeats(table.id)}
-                    disabled={table.seats <= 2}
-                  >
-                    <RemoveCircleIcon />
-                  </IconButton>
-                  <IconButton
-                    size="small"
-                    onClick={() => handleDeleteTable(table.id)}
-                    color="error"
-                  >
-                    <DeleteIcon />
-                  </IconButton>
-                </Box>
-              </Collapse>
-            </ListItem>
-          </Box>
-        ))}
-      </List>
-
-      <Dialog open={!!spaceDialog} onClose={handleCloseSpaceDialog}>
-        <DialogTitle>
-          {spaceDialog === 'danceFloor' ? 'Configure Dance Floor' : 'Configure Band/DJ Area'}
-        </DialogTitle>
+      <Dialog 
+        open={openSpaceDialog} 
+        onClose={() => setOpenSpaceDialog(false)}
+        PaperProps={{
+          sx: {
+            bgcolor: '#0F2F2F',
+            color: '#F4F6F0',
+            borderRadius: 2,
+            border: '1px solid rgba(244, 246, 240, 0.12)'
+          }
+        }}
+      >
+        <DialogTitle>Add Venue Space</DialogTitle>
         <DialogContent>
-          <Box sx={{ pt: 2 }}>
+          <Box sx={{ pt: 2, display: 'flex', flexDirection: 'column', gap: 2 }}>
             <TextField
-              fullWidth
               label="Name"
-              value={spaceConfig.name}
-              onChange={(e) => setSpaceConfig(prev => ({ ...prev, name: e.target.value }))}
-              sx={{ mb: 3 }}
+              fullWidth
+              value={newSpace.name}
+              onChange={(e) => setNewSpace({ ...newSpace, name: e.target.value })}
+              variant="outlined"
+              size="small"
+              sx={{
+                '& .MuiOutlinedInput-root': {
+                  '& fieldset': {
+                    borderColor: 'rgba(244, 246, 240, 0.23)',
+                  },
+                  '&:hover fieldset': {
+                    borderColor: 'rgba(244, 246, 240, 0.5)',
+                  },
+                },
+                '& .MuiInputLabel-root': {
+                  color: 'rgba(244, 246, 240, 0.7)',
+                },
+              }}
             />
-            
-            <Typography gutterBottom>Width: {spaceConfig.widthFeet} ft</Typography>
-            <Slider
-              value={spaceConfig.widthFeet}
-              onChange={handleUpdateSpaceDimension('widthFeet')}
-              min={5}
-              max={30}
-              step={1}
-              marks={[
-                { value: 5, label: '5ft' },
-                { value: 30, label: '30ft' }
-              ]}
-              sx={{ mb: 3 }}
+            <TextField
+              label="Width"
+              type="number"
+              value={newSpace.widthFeet}
+              onChange={(e) => setNewSpace({ ...newSpace, widthFeet: Number(e.target.value) })}
+              InputProps={{
+                endAdornment: <InputAdornment position="end">feet</InputAdornment>,
+              }}
+              variant="outlined"
+              size="small"
+              sx={{
+                '& .MuiOutlinedInput-root': {
+                  '& fieldset': {
+                    borderColor: 'rgba(244, 246, 240, 0.23)',
+                  },
+                  '&:hover fieldset': {
+                    borderColor: 'rgba(244, 246, 240, 0.5)',
+                  },
+                },
+                '& .MuiInputLabel-root': {
+                  color: 'rgba(244, 246, 240, 0.7)',
+                },
+              }}
             />
-            
-            <Typography gutterBottom>Length: {spaceConfig.heightFeet} ft</Typography>
-            <Slider
-              value={spaceConfig.heightFeet}
-              onChange={handleUpdateSpaceDimension('heightFeet')}
-              min={5}
-              max={30}
-              step={1}
-              marks={[
-                { value: 5, label: '5ft' },
-                { value: 30, label: '30ft' }
-              ]}
+            <TextField
+              label="Height"
+              type="number"
+              value={newSpace.heightFeet}
+              onChange={(e) => setNewSpace({ ...newSpace, heightFeet: Number(e.target.value) })}
+              InputProps={{
+                endAdornment: <InputAdornment position="end">feet</InputAdornment>,
+              }}
+              variant="outlined"
+              size="small"
+              sx={{
+                '& .MuiOutlinedInput-root': {
+                  '& fieldset': {
+                    borderColor: 'rgba(244, 246, 240, 0.23)',
+                  },
+                  '&:hover fieldset': {
+                    borderColor: 'rgba(244, 246, 240, 0.5)',
+                  },
+                },
+                '& .MuiInputLabel-root': {
+                  color: 'rgba(244, 246, 240, 0.7)',
+                },
+              }}
             />
           </Box>
         </DialogContent>
-        <DialogActions>
-          <Button onClick={handleCloseSpaceDialog}>Cancel</Button>
-          <Button onClick={handleAddSpace} variant="contained">Add</Button>
+        <DialogActions sx={{ p: 2, pt: 0 }}>
+          <Button 
+            onClick={() => setOpenSpaceDialog(false)}
+            sx={{ 
+              color: 'rgba(244, 246, 240, 0.7)',
+              '&:hover': {
+                color: '#F4F6F0',
+                backgroundColor: 'rgba(244, 246, 240, 0.05)'
+              }
+            }}
+          >
+            Cancel
+          </Button>
+          <Button 
+            onClick={handleAddSpace} 
+            variant="contained" 
+            disabled={!newSpace.name}
+            sx={{
+              bgcolor: '#1A3A3A',
+              color: '#F4F6F0',
+              '&:hover': {
+                bgcolor: '#244444'
+              },
+              '&.Mui-disabled': {
+                bgcolor: 'rgba(26, 58, 58, 0.5)',
+                color: 'rgba(244, 246, 240, 0.3)'
+              }
+            }}
+          >
+            Add
+          </Button>
         </DialogActions>
       </Dialog>
+
+      {selectedSpace && (
+        <Box sx={{ mt: 2 }}>
+          <Typography variant="h6" sx={{ mb: 2 }}>Selected Space</Typography>
+          <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+            <Typography>{selectedSpace.name}</Typography>
+            <IconButton
+              size="small"
+              onClick={() => onDeleteSpace(selectedSpace.id)}
+              sx={{ color: 'primary.main' }}
+            >
+              <DeleteIcon />
+            </IconButton>
+          </Box>
+        </Box>
+      )}
     </Box>
   );
 };

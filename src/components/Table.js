@@ -30,6 +30,12 @@ const Table = ({ table, guests, onAssignGuest, isSelected, onSelect, onUpdateGue
     collect: (monitor) => ({
       isDragging: !!monitor.isDragging(),
     }),
+    end: (item, monitor) => {
+      if (!monitor.didDrop()) {
+        // If the drag ended without a drop, ensure the table remains selected
+        onSelect(table);
+      }
+    },
   });
 
   const getTableDimensions = () => {
@@ -348,8 +354,9 @@ const Table = ({ table, guests, onAssignGuest, isSelected, onSelect, onUpdateGue
       ref={drag}
       sx={getTableStyle()}
       onClick={(e) => {
+        e.preventDefault();
         e.stopPropagation();
-        onSelect();
+        onSelect(table);
       }}
     >
       <Typography 

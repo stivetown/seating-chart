@@ -18,7 +18,7 @@ const SeatingChart = ({
   onUpdateGuest,
   onRemoveGuest,
   onDeleteSpace,
-  workspaceSettings,
+  workspaceSettings
 }) => {
   const [, drop] = useDrop({
     accept: ['TABLE', 'VENUE_SPACE'],
@@ -68,6 +68,8 @@ const SeatingChart = ({
           const boundedY = Math.max(margin, Math.min(y, maxY));
           
           onUpdateTablePosition(table.id, { x: boundedX, y: boundedY });
+          // Ensure table remains selected after drop
+          onSelectTable(table);
         }
       }
       return undefined;
@@ -75,59 +77,82 @@ const SeatingChart = ({
     canDrop: () => true,
   });
 
-  const handleBackgroundClick = () => {
-    onSelectTable(null);
-    onSelectSpace(null);
+  const handleBackgroundClick = (e) => {
+    // Only clear selection if clicking directly on the background
+    if (e.target === e.currentTarget) {
+      onSelectTable(null);
+      onSelectSpace(null);
+    }
   };
 
+  // Create grid lines
+  const gridLines = [];
+  const { width, height, gridSize, margin } = workspaceSettings;
+
+  // Vertical lines
+  for (let x = margin; x <= width - margin; x += gridSize) {
+    gridLines.push(
+      <line
+        key={`v${x}`}
+        x1={x}
+        y1={margin}
+        x2={x}
+        y2={height - margin}
+        stroke="rgba(244, 246, 240, 0.1)"
+        strokeWidth="1"
+      />
+    );
+  }
+
+  // Horizontal lines
+  for (let y = margin; y <= height - margin; y += gridSize) {
+    gridLines.push(
+      <line
+        key={`h${y}`}
+        x1={margin}
+        y1={y}
+        x2={width - margin}
+        y2={y}
+        stroke="rgba(244, 246, 240, 0.1)"
+        strokeWidth="1"
+      />
+    );
+  }
+
   return (
-    <Box
-      ref={drop}
-      onClick={handleBackgroundClick}
-      sx={{
-        position: 'relative',
-        width: '100%',
-        height: '100%',
-        bgcolor: '#0A2A2A',
-        borderRadius: 1,
-        overflow: 'auto',
-        minHeight: '70vh',
-        '&::-webkit-scrollbar': {
-          width: '8px',
-          height: '8px',
-        },
-        '&::-webkit-scrollbar-track': {
-          backgroundColor: 'rgba(244, 246, 240, 0.05)',
-          borderRadius: '4px',
-        },
-        '&::-webkit-scrollbar-thumb': {
-          backgroundColor: 'rgba(244, 246, 240, 0.2)',
-          borderRadius: '4px',
-          '&:hover': {
-            backgroundColor: 'rgba(244, 246, 240, 0.3)',
-          },
-        },
-      }}
-    >
+    <>
+      {/* Fixed Grid */}
+      <svg
+        width={width}
+        height={height}
+        style={{
+          position: 'absolute',
+          top: 0,
+          left: 0,
+          pointerEvents: 'none'
+        }}
+      >
+        {gridLines}
+      </svg>
+
+      {/* Draggable Content */}
       <Box
+        ref={drop}
+        onClick={handleBackgroundClick}
         sx={{
           position: 'relative',
-          width: `${workspaceSettings.width}px`,
-          height: `${workspaceSettings.height}px`,
-          backgroundImage: `
-            linear-gradient(rgba(244, 246, 240, 0.03) 1px, transparent 1px),
-            linear-gradient(90deg, rgba(244, 246, 240, 0.03) 1px, transparent 1px)
-          `,
-          backgroundSize: `${workspaceSettings.gridSize}px ${workspaceSettings.gridSize}px`,
-          border: '1px solid rgba(244, 246, 240, 0.05)',
+          width: width,
+          height: height,
+          bgcolor: '#0A2A2A',
         }}
       >
         {spaces.map((space) => (
           <VenueSpace
             key={space.id}
             space={space}
-            isSelected={selectedSpace === space.id}
-            onSelect={() => onSelectSpace(space.id)}
+            onUpdatePosition={onUpdateSpacePosition}
+            selected={selectedSpace?.id === space.id}
+            onSelect={onSelectSpace}
             onDelete={onDeleteSpace}
           />
         ))}
@@ -137,14 +162,15 @@ const SeatingChart = ({
             table={table}
             guests={guests}
             onAssignGuest={onAssignGuest}
-            isSelected={selectedTable === table.id}
-            onSelect={() => onSelectTable(table.id)}
+            onUpdatePosition={onUpdateTablePosition}
+            isSelected={selectedTable?.id === table.id}
+            onSelect={onSelectTable}
             onUpdateGuest={onUpdateGuest}
             onRemoveGuest={onRemoveGuest}
           />
         ))}
       </Box>
-    </Box>
+    </>
   );
 };
 
