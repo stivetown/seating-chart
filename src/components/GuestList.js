@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useMemo } from 'react';
 import { 
   List, 
   ListItem, 
@@ -11,13 +11,22 @@ import {
   Accordion,
   AccordionSummary,
   AccordionDetails,
-  IconButton
+  IconButton,
+  Chip,
+  FormControl,
+  InputLabel,
+  Select,
+  OutlinedInput,
+  Stack,
+  Divider
 } from '@mui/material';
 import { useDrag } from 'react-dnd';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import EditIcon from '@mui/icons-material/Edit';
 import SaveIcon from '@mui/icons-material/Save';
 import CancelIcon from '@mui/icons-material/Cancel';
+import FilterListIcon from '@mui/icons-material/FilterList';
+import DeleteIcon from '@mui/icons-material/Delete';
 
 const MEAL_OPTIONS = [
   'Not Selected',
@@ -27,6 +36,15 @@ const MEAL_OPTIONS = [
   'Vegetarian',
   'Vegan',
   'Child Meal'
+];
+
+const CATEGORY_OPTIONS = [
+  'Family',
+  'Friends',
+  'Colleagues',
+  'Wedding Party',
+  'Plus One',
+  'Children'
 ];
 
 const DraggableGuest = ({ guest, onUpdateGuest }) => {
@@ -75,10 +93,25 @@ const DraggableGuest = ({ guest, onUpdateGuest }) => {
         }}
       >
         <AccordionSummary expandIcon={<ExpandMoreIcon />}>
-          <Box sx={{ display: 'flex', alignItems: 'center', width: '100%' }}>
+          <Box sx={{ display: 'flex', alignItems: 'center', width: '100%', gap: 1 }}>
             <ListItemText 
               primary={guest.name}
-              secondary={guest.mealChoice || 'No meal selected'}
+              secondary={
+                <Stack direction="row" spacing={1} sx={{ mt: 0.5 }}>
+                  {guest.categories?.map((category, index) => (
+                    <Chip
+                      key={index}
+                      label={category}
+                      size="small"
+                      sx={{ 
+                        bgcolor: 'rgba(244, 246, 240, 0.1)',
+                        color: '#F4F6F0',
+                        fontSize: '0.75rem'
+                      }}
+                    />
+                  ))}
+                </Stack>
+              }
             />
             <IconButton 
               size="small" 
@@ -116,13 +149,28 @@ const DraggableGuest = ({ guest, onUpdateGuest }) => {
                   </MenuItem>
                 ))}
               </TextField>
-              <TextField
-                fullWidth
-                label="Group"
-                value={editedGuest.group || ''}
-                onChange={(e) => setEditedGuest({ ...editedGuest, group: e.target.value })}
-                size="small"
-              />
+              <FormControl fullWidth size="small">
+                <InputLabel>Categories</InputLabel>
+                <Select
+                  multiple
+                  value={editedGuest.categories || []}
+                  onChange={(e) => setEditedGuest({ ...editedGuest, categories: e.target.value })}
+                  input={<OutlinedInput label="Categories" />}
+                  renderValue={(selected) => (
+                    <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 0.5 }}>
+                      {selected.map((value) => (
+                        <Chip key={value} label={value} size="small" />
+                      ))}
+                    </Box>
+                  )}
+                >
+                  {CATEGORY_OPTIONS.map((category) => (
+                    <MenuItem key={category} value={category}>
+                      {category}
+                    </MenuItem>
+                  ))}
+                </Select>
+              </FormControl>
               <TextField
                 fullWidth
                 label="Notes"
@@ -153,11 +201,6 @@ const DraggableGuest = ({ guest, onUpdateGuest }) => {
             </Box>
           ) : (
             <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1 }}>
-              {guest.group && (
-                <Typography variant="body2" color="text.secondary">
-                  Group: {guest.group}
-                </Typography>
-              )}
               <Typography variant="body2" color="text.secondary">
                 Meal: {guest.mealChoice || 'Not Selected'}
               </Typography>
@@ -177,10 +220,22 @@ const DraggableGuest = ({ guest, onUpdateGuest }) => {
 const GuestList = ({ guests, onAddGuest, onUpdateGuest }) => {
   const [newGuest, setNewGuest] = useState({
     name: '',
-    group: '',
     mealChoice: 'Not Selected',
-    notes: ''
+    notes: '',
+    categories: []
   });
+
+  const [filters, setFilters] = useState({
+    categories: []
+  });
+
+  const filteredGuests = useMemo(() => {
+    return guests.filter(guest => {
+      const categoryMatch = filters.categories.length === 0 || 
+        (guest.categories && guest.categories.some(cat => filters.categories.includes(cat)));
+      return categoryMatch;
+    });
+  }, [guests, filters]);
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -188,9 +243,9 @@ const GuestList = ({ guests, onAddGuest, onUpdateGuest }) => {
       onAddGuest(newGuest);
       setNewGuest({
         name: '',
-        group: '',
         mealChoice: 'Not Selected',
-        notes: ''
+        notes: '',
+        categories: []
       });
     }
   };
@@ -200,6 +255,100 @@ const GuestList = ({ guests, onAddGuest, onUpdateGuest }) => {
       <Typography variant="h6" gutterBottom>
         Guest List
       </Typography>
+      
+      {/* Filters */}
+      <Box sx={{ mb: 3 }}>
+        <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 1 }}>
+          <Typography variant="subtitle2" sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+            <FilterListIcon fontSize="small" />
+            Filters
+          </Typography>
+          {filters.categories.length > 0 && (
+            <Button
+              size="small"
+              onClick={() => setFilters({ categories: [] })}
+              sx={{
+                fontSize: '0.75rem',
+                color: 'rgba(244, 246, 240, 0.7)',
+                '&:hover': {
+                  color: '#F4F6F0',
+                }
+              }}
+            >
+              Reset Filters
+            </Button>
+          )}
+        </Box>
+        <FormControl fullWidth size="small">
+          <InputLabel>Categories</InputLabel>
+          <Select
+            multiple
+            value={filters.categories}
+            onChange={(e) => setFilters({ categories: e.target.value })}
+            input={<OutlinedInput label="Categories" />}
+            renderValue={(selected) => (
+              <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 0.5 }}>
+                {selected.map((value) => (
+                  <Chip
+                    key={value}
+                    label={value}
+                    onMouseDown={(e) => e.stopPropagation()}
+                    onDelete={() => {
+                      const newCategories = filters.categories.filter(cat => cat !== value);
+                      setFilters({ categories: newCategories });
+                    }}
+                    size="small"
+                    sx={{
+                      bgcolor: 'rgba(244, 246, 240, 0.1)',
+                      color: '#F4F6F0',
+                      fontSize: '0.75rem',
+                      '& .MuiChip-deleteIcon': {
+                        color: 'rgba(244, 246, 240, 0.7)',
+                        '&:hover': {
+                          color: '#F4F6F0',
+                        }
+                      }
+                    }}
+                  />
+                ))}
+              </Box>
+            )}
+          >
+            {CATEGORY_OPTIONS.map((category) => (
+              <MenuItem 
+                key={category} 
+                value={category}
+                sx={{
+                  display: 'flex',
+                  justifyContent: 'space-between',
+                  alignItems: 'center',
+                  gap: 1
+                }}
+              >
+                {category}
+                {filters.categories.includes(category) && (
+                  <IconButton
+                    size="small"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      const newCategories = filters.categories.filter(cat => cat !== category);
+                      setFilters({ categories: newCategories });
+                    }}
+                    sx={{ 
+                      color: 'error.main',
+                      p: 0.5
+                    }}
+                  >
+                    <DeleteIcon fontSize="small" />
+                  </IconButton>
+                )}
+              </MenuItem>
+            ))}
+          </Select>
+        </FormControl>
+      </Box>
+
+      <Divider sx={{ my: 2 }} />
       
       <form onSubmit={handleSubmit}>
         <TextField
@@ -225,14 +374,28 @@ const GuestList = ({ guests, onAddGuest, onUpdateGuest }) => {
             </MenuItem>
           ))}
         </TextField>
-        <TextField
-          fullWidth
-          margin="normal"
-          label="Group (Optional)"
-          value={newGuest.group}
-          onChange={(e) => setNewGuest({ ...newGuest, group: e.target.value })}
-          size="small"
-        />
+        <FormControl fullWidth margin="normal" size="small">
+          <InputLabel>Categories</InputLabel>
+          <Select
+            multiple
+            value={newGuest.categories}
+            onChange={(e) => setNewGuest({ ...newGuest, categories: e.target.value })}
+            input={<OutlinedInput label="Categories" />}
+            renderValue={(selected) => (
+              <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 0.5 }}>
+                {selected.map((value) => (
+                  <Chip key={value} label={value} size="small" />
+                ))}
+              </Box>
+            )}
+          >
+            {CATEGORY_OPTIONS.map((category) => (
+              <MenuItem key={category} value={category}>
+                {category}
+              </MenuItem>
+            ))}
+          </Select>
+        </FormControl>
         <TextField
           fullWidth
           margin="normal"
@@ -255,7 +418,7 @@ const GuestList = ({ guests, onAddGuest, onUpdateGuest }) => {
       </form>
 
       <List sx={{ mt: 2, maxHeight: '50vh', overflow: 'auto' }}>
-        {guests.map((guest) => (
+        {filteredGuests.map((guest) => (
           <DraggableGuest 
             key={guest.id} 
             guest={guest} 

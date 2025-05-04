@@ -91,9 +91,9 @@ const Layout = () => {
       type: tableType,
       name: `Table ${tables.length + 1}`,
       seats: tableType === 'round' ? 8 : 
-             tableType === 'square' ? 8 : 6,
+             tableType === 'square' ? 8 : 12,
       guests: Array(tableType === 'round' ? 8 : 
-              tableType === 'square' ? 8 : 6).fill(null),
+              tableType === 'square' ? 8 : 12).fill(null),
       position
     };
     setTables([...tables, newTable]);

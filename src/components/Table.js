@@ -44,8 +44,8 @@ const Table = ({ table, guests, onAssignGuest, isSelected, onSelect, onUpdateGue
         return { width: 140, height: 140 };
       case 'square':
         return { width: 140, height: 140 };
-      case 'rectangle':
-        return { width: 180, height: 100 };
+      case 'rectangular':
+        return { width: 320, height: 80 };
       default:
         return { width: 140, height: 140 };
     }
@@ -319,15 +319,24 @@ const Table = ({ table, guests, onAssignGuest, isSelected, onSelect, onUpdateGue
             break;
         }
       } else {
-        // Rectangle table seats
-        const side = Math.floor(i / 3);
-        const pos = i % 3;
+        // Rectangular table seats
+        const side = Math.floor(i / 6);
+        const pos = i % 6;
+        const spacing = dimensions.width / 7;
         switch (side) {
           case 0: // Top
-            seatStyle = { top: -24, left: 30 + pos * 50 };
+            seatStyle = { 
+              top: -24, 
+              left: spacing + (pos * spacing),
+              transform: 'translate(-50%, 0)'
+            };
             break;
           case 1: // Bottom
-            seatStyle = { bottom: -24, left: 30 + pos * 50 };
+            seatStyle = { 
+              bottom: -24, 
+              left: spacing + (pos * spacing),
+              transform: 'translate(-50%, 0)'
+            };
             break;
         }
       }
