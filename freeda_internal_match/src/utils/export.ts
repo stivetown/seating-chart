@@ -140,12 +140,12 @@ export function parseCSVData(csvContent: string): Promise<Member[]> {
       header: true,
       skipEmptyLines: true,
       transformHeader: (header: string) => {
-        // Normalize header names
+        // Normalize header names for the Freeda dataset
         const normalized = header.toLowerCase().trim();
         switch (normalized) {
+          case 'full name':
           case 'name':
           case 'member name':
-          case 'full name':
             return 'name';
           case 'email':
           case 'email address':
@@ -153,15 +153,18 @@ export function parseCSVData(csvContent: string): Promise<Member[]> {
           case 'experience':
           case 'experience level':
           case 'skill level':
-            return 'experience';
+          case 'years within industry':
+            return 'yearsInIndustry';
           case 'price tier':
           case 'price':
           case 'pricing tier':
           case 'budget':
+          case 'what range do most of your clients\' budgets fall into?':
             return 'priceTier';
           case 'categories':
           case 'interests':
           case 'skills':
+          case 'industry category':
             return 'categories';
           case 'group id':
           case 'group':
@@ -177,6 +180,27 @@ export function parseCSVData(csvContent: string): Promise<Member[]> {
           case 'notes':
           case 'comments':
             return 'notes';
+          case 'what was your average revenue per booking last year?':
+            return 'averageRevenue';
+          case 'when did you start the company?':
+            return 'companyFounded';
+          case 'your company\'s approximate annual net revenue?':
+            return 'annualRevenue';
+          case 'city, state':
+          case 'where are most of your events taking place?':
+            return 'location';
+          case 'what is your biggest goal for this year?':
+            return 'goals';
+          case 'type of bookings':
+            return 'bookingTypes';
+          case 'number of bookings per year':
+            return 'bookingsPerYear';
+          case 'number of freelancers you regularly work with':
+            return 'freelancersWorkedWith';
+          case 'which of the following best describes your current networking strategy?':
+            return 'networkingStrategy';
+          case 'which of the following is most important to you when it comes to freeda?':
+            return 'freedaImportance';
           default:
             return header;
         }
@@ -187,60 +211,72 @@ export function parseCSVData(csvContent: string): Promise<Member[]> {
             // Generate ID if not provided
             const id = row.id || `member_${Date.now()}_${index}`;
             
-            // Parse categories - handle different formats
+            // Parse categories - handle industry category format
             let categories: string[] = [];
             if (row.categories) {
               if (typeof row.categories === 'string') {
-                categories = row.categories
-                  .split(/[;,|]/)
-                  .map((cat: string) => cat.trim())
-                  .filter((cat: string) => cat.length > 0);
+                // Map specific industry categories to our simplified ones
+                const categoryMap: { [key: string]: string } = {
+                  'Photographer': 'Photographer',
+                  'Planner': 'Planner',
+                  'Caterer': 'Catering',
+                  'Florist': 'Floral',
+                  'Videographer': 'Videographer',
+                  'DJ': 'Entertainment',
+                  'Stationer': 'Stationery'
+                };
+                categories = [categoryMap[row.categories] || row.categories];
               } else if (Array.isArray(row.categories)) {
                 categories = row.categories;
               }
             }
 
-            // Validate and normalize experience level
-            const experienceMap: Record<string, string> = {
-              'beginner': 'Beginner',
-              'intermediate': 'Intermediate', 
-              'advanced': 'Advanced',
-              'expert': 'Expert',
-              'junior': 'Beginner',
-              'senior': 'Advanced',
-              'lead': 'Expert'
-            };
-            
-            const normalizedExp = experienceMap[row.experience?.toLowerCase()] || row.experience;
+            // Parse years in industry to determine experience level
+            const yearsInIndustry = parseInt(row.yearsInIndustry) || 0;
+            let experience: 'Beginner' | 'Intermediate' | 'Advanced' | 'Expert';
+            if (yearsInIndustry <= 3) experience = 'Beginner';
+            else if (yearsInIndustry <= 8) experience = 'Intermediate';
+            else if (yearsInIndustry <= 15) experience = 'Advanced';
+            else experience = 'Expert';
 
-            // Validate and normalize price tier
-            const priceTierMap: Record<string, string> = {
-              'budget': 'Budget',
-              'mid-range': 'Mid-Range',
-              'mid range': 'Mid-Range',
-              'premium': 'Premium',
-              'luxury': 'Luxury',
-              'low': 'Budget',
-              'medium': 'Mid-Range',
-              'high': 'Premium',
-              'very high': 'Luxury'
-            };
+            // Parse price tier from budget range or average revenue
+            let priceTier: 'Budget' | 'Mid-Range' | 'Premium' | 'Luxury';
+            const avgRevenue = parseInt(row.averageRevenue) || 0;
+            if (avgRevenue <= 10000) priceTier = 'Budget';
+            else if (avgRevenue <= 25000) priceTier = 'Mid-Range';
+            else if (avgRevenue <= 50000) priceTier = 'Premium';
+            else priceTier = 'Luxury';
 
-            const normalizedPrice = priceTierMap[row.priceTier?.toLowerCase()] || row.priceTier;
+            // Parse group ID
+            let groupId = undefined;
+            if (row.groupId && row.groupId.toLowerCase().includes('group')) {
+              groupId = row.groupId.toLowerCase().replace(/\s+/g, '_');
+            }
 
             return {
               id,
               name: row.name || '',
-              email: row.email || '',
-              experience: normalizedExp as any,
-              priceTier: normalizedPrice as any,
+              email: `${row.name?.toLowerCase().replace(/[^a-zA-Z0-9]/g, '')}@example.com` || `member${index}@example.com`,
+              experience: experience,
+              priceTier: priceTier,
               categories,
-              groupId: row.groupId || undefined,
+              location: row.location || '',
+              yearsInIndustry: yearsInIndustry,
+              averageRevenue: row.averageRevenue || '0',
+              companyFounded: row.companyFounded || '',
+              annualRevenue: row.annualRevenue || '',
+              goals: row.goals || '',
+              bookingTypes: row.bookingTypes || '',
+              bookingsPerYear: parseInt(row.bookingsPerYear) || 0,
+              freelancersWorkedWith: parseInt(row.freelancersWorkedWith) || 0,
+              networkingStrategy: row.networkingStrategy || '',
+              freedaImportance: row.freedaImportance || '',
+              groupId: groupId,
               notes: row.notes || undefined,
               joinedDate: row.joinedDate || new Date().toISOString().split('T')[0],
               lastActive: row.lastActive || new Date().toISOString().split('T')[0]
             };
-          }).filter(member => member.name && member.email); // Filter out invalid rows
+          }).filter(member => member.name); // Filter out invalid rows
 
           resolve(members);
         } catch (error) {
