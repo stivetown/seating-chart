@@ -19,7 +19,7 @@ const LoginGate = ({ onAuthenticated }: { onAuthenticated: () => void }) => {
   const [error, setError] = useState('');
   const [isLoading, setIsLoading] = useState(false);
 
-  const CORRECT_PASSWORD = 'FreedaAdmin2024!'; // Change this to your desired password
+  const CORRECT_PASSWORD = 'Fd#9K2m!8nQ7$xL5'; // Secure password for Freeda admin access
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
