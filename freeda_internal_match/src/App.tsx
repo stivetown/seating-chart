@@ -32,6 +32,7 @@ function App() {
     addMemberToGroup,
     createNewGroup,
     removeMemberFromGroup,
+    importMembers,
     refreshData
   } = useMembers();
 
@@ -155,7 +156,7 @@ function App() {
         return <ImportExport 
           groups={groups} 
           ungroupedMembers={ungroupedMembers}
-          onImportMembers={() => {}} 
+          onImportMembers={importMembers} 
         />;
       default:
         return <Dashboard 

@@ -170,6 +170,59 @@ export function useMembers() {
     }).filter(Boolean) as Group[]);
   };
 
+  const importMembers = (importedMembers: Member[]) => {
+    // Add imported members to existing members
+    setMembers(prev => {
+      // Remove duplicates based on name and email
+      const existingMemberKeys = new Set(prev.map(m => `${m.name}-${m.email}`));
+      const newMembers = importedMembers.filter(member => 
+        !existingMemberKeys.has(`${member.name}-${member.email}`)
+      );
+      
+      return [...prev, ...newMembers];
+    });
+
+    // Process groups from imported members
+    const newGroups = new Map<string, Group>();
+    importedMembers.forEach(member => {
+      if (member.groupId) {
+        if (!newGroups.has(member.groupId)) {
+          const groupNumber = member.groupId.replace(/[^\d]/g, '');
+          newGroups.set(member.groupId, {
+            id: member.groupId,
+            name: `Group ${groupNumber}`,
+            members: [],
+            averageExperience: 0,
+            dominantPriceTier: '',
+            categories: [] as string[],
+            createdDate: new Date().toISOString().split('T')[0],
+            lastActivity: new Date().toISOString().split('T')[0]
+          });
+        }
+        const group = newGroups.get(member.groupId)!;
+        group.members.push(member);
+      }
+    });
+
+    // Calculate group statistics and merge with existing groups
+    newGroups.forEach(group => {
+      const stats = calculateGroupStats(group);
+      group.averageExperience = stats.averageExperience;
+      group.dominantPriceTier = stats.dominantPriceTier;
+      group.categories = stats.categories;
+    });
+
+    setGroups(prev => {
+      // Merge with existing groups, avoiding duplicates
+      const existingGroupIds = new Set(prev.map(g => g.id));
+      const groupsToAdd = Array.from(newGroups.values()).filter(g => 
+        !existingGroupIds.has(g.id)
+      );
+      
+      return [...prev, ...groupsToAdd];
+    });
+  };
+
   return {
     members,
     groups,
@@ -180,6 +233,7 @@ export function useMembers() {
     addMemberToGroup,
     createNewGroup,
     removeMemberFromGroup,
+    importMembers,
     refreshData: loadCSVData
   };
 } 
