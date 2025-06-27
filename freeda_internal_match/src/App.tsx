@@ -12,6 +12,7 @@ import Dashboard from './components/Dashboard';
 import UngroupedMembers from './components/UngroupedMembers';
 import GroupCards from './components/GroupCards';
 import ImportExport from './components/ImportExport';
+import Alerts from './components/Alerts';
 
 // Logout function for header
 const handleLogout = () => {
@@ -84,6 +85,7 @@ function App() {
     { id: 'dashboard', name: 'Dashboard', icon: BarChart3 },
     { id: 'ungrouped', name: 'Ungrouped Members', icon: Users },
     { id: 'groups', name: 'Group Management', icon: Users2 },
+    { id: 'alerts', name: 'Alerts', icon: AlertTriangle },
     { id: 'import-export', name: 'Import/Export', icon: FileText },
   ];
 
@@ -152,6 +154,8 @@ function App() {
             onUpdateGroup={() => {}}
           />
         );
+      case 'alerts':
+        return <Alerts stats={dashboardStats} />;
       case 'import-export':
         return <ImportExport 
           groups={groups} 
