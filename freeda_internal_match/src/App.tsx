@@ -89,10 +89,10 @@ function App() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+      <div className="min-h-screen bg-elegant-primary flex items-center justify-center">
         <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto"></div>
-          <p className="mt-4 text-gray-600">Loading member data...</p>
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-white/30 mx-auto"></div>
+          <p className="mt-4 text-white/80 text-lg">Loading member data...</p>
         </div>
       </div>
     );
@@ -100,14 +100,14 @@ function App() {
 
   if (error) {
     return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
-        <div className="text-center">
-          <AlertTriangle className="h-12 w-12 text-red-500 mx-auto mb-4" />
-          <h2 className="text-xl font-semibold text-gray-900 mb-2">Error Loading Data</h2>
-          <p className="text-gray-600 mb-4">{error}</p>
+      <div className="min-h-screen bg-elegant-primary flex items-center justify-center">
+        <div className="text-center card-elegant p-8 max-w-md mx-4">
+          <AlertTriangle className="h-12 w-12 text-red-400 mx-auto mb-4" />
+          <h2 className="text-xl font-semibold text-white mb-2">Error Loading Data</h2>
+          <p className="text-white/70 mb-6">{error}</p>
           <button 
             onClick={refreshData}
-            className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg"
+            className="btn-elegant"
           >
             Try Again
           </button>
@@ -168,22 +168,22 @@ function App() {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-elegant-primary">
       {/* Header */}
-      <header className="bg-white shadow-sm border-b border-gray-200">
+      <header className="bg-white/10 backdrop-blur-md shadow-elegant border-b border-white/20">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center h-16">
             <div className="flex items-center">
-              <h1 className="text-2xl font-bold text-gray-900">Freeda Admin</h1>
-              <span className="ml-3 text-sm text-gray-500">Member Matching System</span>
+              <h1 className="text-2xl font-bold text-white">Freeda Admin</h1>
+              <span className="ml-3 text-sm text-white/70">Member Matching System</span>
             </div>
             <div className="flex items-center space-x-4">
-              <div className="text-sm text-gray-500">
+              <div className="text-sm text-white/70">
                 {members.length} members • {groups.length} groups
               </div>
               <button
                 onClick={handleLogout}
-                className="text-sm text-red-600 hover:text-red-700"
+                className="text-sm text-red-200 hover:text-red-100 transition-colors"
               >
                 Logout
               </button>
@@ -197,7 +197,7 @@ function App() {
         <div className="flex space-x-8">
           {/* Sidebar */}
           <div className="w-64 flex-shrink-0">
-            <nav className="bg-white rounded-lg shadow-sm p-4">
+            <nav className="card-elegant p-4">
               <ul className="space-y-2">
                 {navigation.map((item) => {
                   const Icon = item.icon;
@@ -205,10 +205,10 @@ function App() {
                     <li key={item.id}>
                       <button
                         onClick={() => setActiveTab(item.id)}
-                        className={`w-full flex items-center px-3 py-2 text-sm font-medium rounded-md transition-colors ${
+                        className={`w-full flex items-center px-3 py-2 text-sm font-medium rounded-md transition-all duration-200 ${
                           activeTab === item.id
-                            ? 'bg-blue-100 text-blue-700'
-                            : 'text-gray-600 hover:bg-gray-100'
+                            ? 'bg-white/20 text-white shadow-lg'
+                            : 'text-white/70 hover:bg-white/10 hover:text-white'
                         }`}
                       >
                         <Icon className="mr-3 h-5 w-5" />
