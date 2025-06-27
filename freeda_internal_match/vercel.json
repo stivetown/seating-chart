@@ -5,11 +5,6 @@
   "devCommand": "npm start",
   "installCommand": "npm install",
   "framework": "create-react-app",
-  "functions": {
-    "app/api/*.js": {
-      "runtime": "nodejs18.x"
-    }
-  },
   "headers": [
     {
       "source": "/static/(.*)",
@@ -20,24 +15,5 @@
         }
       ]
     }
-  ],
-  "routes": [
-    {
-      "src": "/app.html",
-      "dest": "/index.html"
-    },
-    {
-      "src": "/static/(.*)",
-      "headers": {
-        "Cache-Control": "public, max-age=31536000, immutable"
-      }
-    },
-    {
-      "src": "/(.*)",
-      "dest": "/password-protection.html"
-    }
-  ],
-  "env": {
-    "VERCEL_PASSWORD": "@freeda-admin-password"
-  }
+  ]
 } 
