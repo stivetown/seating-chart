@@ -13,86 +13,14 @@ import UngroupedMembers from './components/UngroupedMembers';
 import GroupCards from './components/GroupCards';
 import ImportExport from './components/ImportExport';
 
-// Password Protection Component
-const LoginGate = ({ onAuthenticated }: { onAuthenticated: () => void }) => {
-  const [password, setPassword] = useState('');
-  const [error, setError] = useState('');
-  const [isLoading, setIsLoading] = useState(false);
-
-  const CORRECT_PASSWORD = 'Fd#9K2m!8nQ7$xL5'; // Secure password for Freeda admin access
-
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    setIsLoading(true);
-    setError('');
-
-    // Simulate network delay for security
-    setTimeout(() => {
-      if (password === CORRECT_PASSWORD) {
-        sessionStorage.setItem('freeda_authenticated', 'true');
-        onAuthenticated();
-      } else {
-        setError('Incorrect password. Please try again.');
-        setPassword('');
-      }
-      setIsLoading(false);
-    }, 500);
-  };
-
-  return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-600 via-purple-600 to-blue-800 flex items-center justify-center px-4">
-      <div className="bg-white rounded-2xl shadow-2xl p-8 w-full max-w-md">
-        <div className="text-center mb-8">
-          <div className="text-4xl font-bold text-blue-600 mb-2">🎯 Freeda</div>
-          <div className="text-gray-600 text-sm">Admin Interface - Members & Matching</div>
-        </div>
-        
-        <form onSubmit={handleSubmit} className="space-y-6">
-          <div>
-            <label htmlFor="password" className="block text-sm font-medium text-gray-700 mb-2">
-              Access Password
-            </label>
-            <input
-              type="password"
-              id="password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              className="w-full px-4 py-3 border-2 border-gray-200 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors"
-              placeholder="Enter admin password"
-              required
-              disabled={isLoading}
-            />
-            {error && (
-              <div className="mt-2 text-red-600 text-sm">{error}</div>
-            )}
-          </div>
-          
-          <button
-            type="submit"
-            disabled={isLoading}
-            className="w-full bg-blue-600 hover:bg-blue-700 disabled:bg-blue-400 text-white font-medium py-3 px-4 rounded-lg transition-colors"
-          >
-            {isLoading ? 'Authenticating...' : 'Access Admin Dashboard'}
-          </button>
-        </form>
-        
-        <div className="mt-6 text-center text-xs text-gray-500">
-          Secure access required for member data protection
-        </div>
-      </div>
-    </div>
-  );
+// Logout function for header
+const handleLogout = () => {
+  sessionStorage.removeItem('freeda_authenticated');
+  window.location.href = '/login.html';
 };
 
 function App() {
-  const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [activeTab, setActiveTab] = useState('dashboard');
-  
-  // Check authentication status
-  useEffect(() => {
-    const authStatus = sessionStorage.getItem('freeda_authenticated');
-    setIsAuthenticated(authStatus === 'true');
-  }, []);
 
   const {
     members,
@@ -106,11 +34,6 @@ function App() {
     removeMemberFromGroup,
     refreshData
   } = useMembers();
-
-  // Show login gate if not authenticated
-  if (!isAuthenticated) {
-    return <LoginGate onAuthenticated={() => setIsAuthenticated(true)} />;
-  }
 
   const ungroupedMembers = getUngroupedMembers();
   
@@ -258,10 +181,7 @@ function App() {
                 {members.length} members • {groups.length} groups
               </div>
               <button
-                onClick={() => {
-                  sessionStorage.removeItem('freeda_authenticated');
-                  setIsAuthenticated(false);
-                }}
+                onClick={handleLogout}
                 className="text-sm text-red-600 hover:text-red-700"
               >
                 Logout
