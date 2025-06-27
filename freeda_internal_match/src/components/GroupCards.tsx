@@ -208,7 +208,7 @@ const GroupCards: React.FC<GroupCardsProps> = ({ groups, onRemoveMember, onUpdat
             {/* Group Footer */}
             <div className="px-6 py-3 bg-gray-50 border-t border-gray-200">
               <p className="text-xs text-gray-500">
-                Last modified: {new Date(group.lastModified).toLocaleDateString()}
+                Last modified: {new Date(group.lastActivity).toLocaleDateString()}
               </p>
               {group.notes && (
                 <p className="text-xs text-gray-600 mt-1 italic">"{group.notes}"</p>

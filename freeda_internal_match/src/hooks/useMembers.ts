@@ -49,7 +49,7 @@ export function useMembers() {
 
              // Calculate group statistics
        existingGroups.forEach(group => {
-         const stats = calculateGroupStats(group.members);
+                   const stats = calculateGroupStats(group);
          group.averageExperience = stats.averageExperience;
          group.dominantPriceTier = stats.dominantPriceTier;
          group.categories = stats.categories;
@@ -89,10 +89,13 @@ export function useMembers() {
         const updatedMember = members.find(m => m.id === memberId);
         if (updatedMember) {
           const newMembers = [...group.members, { ...updatedMember, groupId }];
-          const stats = calculateGroupStats(newMembers);
-          return {
+          const updatedGroup = {
             ...group,
             members: newMembers,
+          };
+          const stats = calculateGroupStats(updatedGroup);
+          return {
+            ...updatedGroup,
             averageExperience: stats.averageExperience,
             dominantPriceTier: stats.dominantPriceTier,
             categories: stats.categories,
@@ -129,7 +132,7 @@ export function useMembers() {
       lastActivity: new Date().toISOString().split('T')[0]
     };
 
-    const stats = calculateGroupStats(newGroup.members);
+    const stats = calculateGroupStats(newGroup);
     newGroup.averageExperience = stats.averageExperience;
     newGroup.dominantPriceTier = stats.dominantPriceTier;
     newGroup.categories = stats.categories;
@@ -150,10 +153,13 @@ export function useMembers() {
         if (newMembers.length === 0) {
           return null; // Mark for removal
         }
-        const stats = calculateGroupStats(newMembers);
-        return {
+        const updatedGroup = {
           ...group,
           members: newMembers,
+        };
+        const stats = calculateGroupStats(updatedGroup);
+        return {
+          ...updatedGroup,
           averageExperience: stats.averageExperience,
           dominantPriceTier: stats.dominantPriceTier,
           categories: stats.categories,

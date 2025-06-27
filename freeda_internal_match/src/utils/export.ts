@@ -110,7 +110,7 @@ export function exportGroupSummaryToCSV(groups: Group[]): void {
       group.dominantPriceTier,
       group.categories.join('; '),
       group.createdDate,
-      group.lastModified,
+      group.lastActivity,
       group.members.map(m => m.name).join('; '),
       group.notes || ''
     ]);

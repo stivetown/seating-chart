@@ -195,14 +195,21 @@ function App() {
   const renderContent = () => {
     switch (activeTab) {
       case 'dashboard':
-        return <Dashboard stats={dashboardStats} />;
+        return <Dashboard 
+          stats={dashboardStats} 
+          onViewUngrouped={() => setActiveTab('ungrouped')}
+          onViewAlerts={() => setActiveTab('alerts')}
+        />;
       case 'ungrouped':
         return (
           <UngroupedMembers
             ungroupedMembers={ungroupedMembers}
             groups={groups}
             onAssignMember={addMemberToGroup}
-            onCreateGroup={createNewGroup}
+            onCreateGroup={(name: string, memberIds: string[]) => {
+              createNewGroup(memberIds[0]);
+              return `group_${Date.now()}`;
+            }}
           />
         );
       case 'groups':
@@ -222,9 +229,17 @@ function App() {
           />
         );
       case 'import-export':
-        return <ImportExport members={members} groups={groups} />;
+        return <ImportExport 
+          groups={groups} 
+          ungroupedMembers={ungroupedMembers}
+          onImportMembers={() => {}} 
+        />;
       default:
-        return <Dashboard stats={dashboardStats} />;
+        return <Dashboard 
+          stats={dashboardStats} 
+          onViewUngrouped={() => setActiveTab('ungrouped')}
+          onViewAlerts={() => setActiveTab('alerts')}
+        />;
     }
   };
 
