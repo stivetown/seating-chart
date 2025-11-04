@@ -1,0 +1,90 @@
+import { NextResponse } from 'next/server';
+
+export const dynamic = 'force-dynamic';
+
+// Static vibes data for development
+const STATIC_VIBES = [
+  {
+    id: 'cozy-creative',
+    title: 'Cozy & Creative',
+    emoji: '🎨',
+    tags: ['energy:low', 'setting:home', 'category:creative', 'group:2-4'],
+  },
+  {
+    id: 'chill-social',
+    title: 'Chill & Social',
+    emoji: '🫶',
+    tags: [
+      'energy:medium',
+      'setting:home-or-nearby',
+      'category:social',
+      'group:3-6',
+    ],
+  },
+  {
+    id: 'lowkey-game',
+    title: 'Low-Key Game Night',
+    emoji: '🧩',
+    tags: ['energy:low', 'setting:home-or-cafe', 'category:games', 'group:2-5'],
+  },
+  {
+    id: 'mini-adventure',
+    title: 'Mini Adventure',
+    emoji: '🥾',
+    tags: ['energy:medium', 'setting:outdoor', 'category:explore', 'group:2-4'],
+  },
+  {
+    id: 'talk-taste',
+    title: 'Talk & Taste',
+    emoji: '🍷',
+    tags: ['energy:low', 'setting:home-or-local', 'category:food', 'group:2-6'],
+  },
+  {
+    id: 'music-mingle',
+    title: 'Music & Mingle',
+    emoji: '🎶',
+    tags: [
+      'energy:medium',
+      'setting:home-or-local',
+      'category:music',
+      'group:3-8',
+    ],
+  },
+  {
+    id: 'active-outdoor',
+    title: 'Active Outdoors',
+    emoji: '🌳',
+    tags: ['energy:high', 'setting:outdoor', 'category:active', 'group:2-5'],
+  },
+  {
+    id: 'focused-build',
+    title: 'Focused Build',
+    emoji: '🧰',
+    tags: ['energy:medium', 'setting:home', 'category:makers', 'group:1-3'],
+  },
+  {
+    id: 'culture-hop',
+    title: 'Culture Hop',
+    emoji: '🖼️',
+    tags: ['energy:medium', 'setting:city', 'category:culture', 'group:2-4'],
+  },
+  {
+    id: 'late-night',
+    title: 'Late Night',
+    emoji: '🌙',
+    tags: ['energy:medium', 'setting:local', 'category:nightlife', 'group:2-6'],
+  },
+];
+
+export async function GET() {
+  try {
+    console.log('Vibes endpoint called');
+    return NextResponse.json({ vibes: STATIC_VIBES });
+  } catch (error) {
+    console.error('GET /api/vibes error:', error);
+    return NextResponse.json(
+      { error: 'Internal server error' },
+      { status: 500 }
+    );
+  }
+}

@@ -1,0 +1,50 @@
+[
+  {
+    "vibe_combo_key":"chill-social|cozy-creative",
+    "items":[
+      { "title":"Cook + Movie Night", "desc":"Pick a simple recipe, then a comfort movie; debrief over dessert.", "url":"https://www.google.com/search?q=easy+group+recipes" },
+      { "title":"Craft & Chat", "desc":"Bring a simple craft (origami, sketching) and hang out." },
+      { "title":"Board-Game Café", "desc":"Low-rules games like Sushi Go!, Just One, or Azul.", "url":"https://www.google.com/maps/search/board+game+cafe+near+me" }
+    ]
+  },
+  {
+    "vibe_combo_key":"lowkey-game|talk-taste",
+    "items":[
+      { "title":"Wine + Cards", "desc":"Light card games (Skull, LAMA) with snacks." },
+      { "title":"Trivia Pack", "desc":"DIY trivia (category rounds) + blind snack tasting.", "url":"https://www.google.com/search?q=trivia+question+ideas" },
+      { "title":"Co-op One Shot", "desc":"A 45-min co-op like The Crew or Forbidden Island." }
+    ]
+  },
+  {
+    "vibe_combo_key":"mini-adventure|active-outdoor",
+    "items":[
+      { "title":"Sunset Walk", "desc":"Pick a scenic loop; finish with gelato or hot chocolate.", "url":"https://www.google.com/maps/search/park+trails+near+me" },
+      { "title":"Photo Quest", "desc":"List 10 shots to capture; compare albums after." },
+      { "title":"Micro-Geocache", "desc":"Find one cache; celebrate at a nearby café.", "url":"https://www.geocaching.com/play" }
+    ]
+  },
+  {
+    "vibe_combo_key":"music-mingle|chill-social",
+    "items":[
+      { "title":"Playlist Potluck", "desc":"Everyone brings 3 tracks; vote a vibe winner.", "url":"https://www.google.com/search?q=party+playlist+ideas" },
+      { "title":"Tiny Karaoke", "desc":"Phone + speaker; draft a 5-song set." },
+      { "title":"Open-Mic Scout", "desc":"Check a local open mic or jazz night.", "url":"https://www.google.com/maps/search/open+mic+near+me" }
+    ]
+  },
+  {
+    "vibe_combo_key":"culture-hop|talk-taste",
+    "items":[
+      { "title":"Gallery + Dessert", "desc":"Quick exhibit walk, then a dessert debrief.", "url":"https://www.google.com/maps/search/art+gallery+near+me" },
+      { "title":"Bookstore Roulette", "desc":"Each grabs a zine/book under $15 and shares a gem.", "url":"https://www.google.com/maps/search/indie+bookstore+near+me" },
+      { "title":"Neighborhood Bites", "desc":"Two small plates across two spots; compare faves." }
+    ]
+  },
+  {
+    "vibe_combo_key":"late-night|chill-social",
+    "items":[
+      { "title":"Dessert Run", "desc":"Late-night sweets + street stroll.", "url":"https://www.google.com/maps/search/dessert+near+me" },
+      { "title":"Night Views", "desc":"Find a skyline spot; bring a speaker for low volume." },
+      { "title":"After-Hours Games", "desc":"Short party games (Just One, Spyfall, Wavelength)." }
+    ]
+  }
+]
