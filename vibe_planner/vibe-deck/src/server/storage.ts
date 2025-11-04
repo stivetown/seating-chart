@@ -305,8 +305,8 @@ export async function computeAndStoreMatch(sessionId: string) {
           SELECT items FROM recommendations WHERE vibe_combo_key = ${key} LIMIT 1
         `;
         
+        // If no exact match and key contains "|", try each part individually
         if (rows.length === 0 && key.includes('|')) {
-          // Try each part of combo individually
           const parts = key.split('|');
           for (const part of parts) {
             rows = await dbConnection`
@@ -316,9 +316,26 @@ export async function computeAndStoreMatch(sessionId: string) {
           }
         }
         
+        // If still no match, try finding recommendations that contain this vibe key
+        if (rows.length === 0) {
+          const allRows = await dbConnection`
+            SELECT items, vibe_combo_key FROM recommendations
+          `;
+          // Find recommendations where combo key contains this vibe key
+          for (const row of allRows) {
+            const comboKey = row.vibe_combo_key;
+            if (comboKey && (comboKey === key || comboKey.includes(key) || key.includes(comboKey) || comboKey.split('|').includes(key))) {
+              rows = [row];
+              break;
+            }
+          }
+        }
+        
         if (rows.length > 0) {
           const items = typeof rows[0].items === 'string' ? JSON.parse(rows[0].items) : rows[0].items;
-          suggestions = Array.isArray(items) ? items.slice(0, 5) : [];
+          // Shuffle and take up to 5 for variety
+          const shuffled = Array.isArray(items) ? [...items].sort(() => Math.random() - 0.5) : [];
+          suggestions = shuffled.slice(0, 5);
           console.log('[computeMatch] Found suggestions from DB:', suggestions.length);
         }
       } catch (e) {
@@ -326,16 +343,94 @@ export async function computeAndStoreMatch(sessionId: string) {
       }
     }
     
-    // Fallback to hardcoded suggestions if DB didn't return any
+    // Fallback to hardcoded suggestions if DB didn't return any (with variety based on vibe key)
     if (suggestions.length === 0) {
       console.log('[computeMatch] Using fallback suggestions for key:', key);
-      if (key.includes('game')) {
-        suggestions = [{ title:'Low-rules party game' },{ title:'Card game + snacks' },{ title:'Trivia mini-pack' }];
-      } else if (key.includes('outdoor')) {
-        suggestions = [{ title:'Sunset walk' },{ title:'Photo quest' },{ title:'Coffee after' }];
+      
+      // Expanded fallback suggestions based on vibe type
+      const fallbackSuggestions: Record<string, Array<{ title: string; desc?: string }>> = {
+        'cozy-creative': [
+          { title: 'Cook + Movie Night', desc: 'Pick a simple recipe, then a comfort movie' },
+          { title: 'Craft & Chat', desc: 'Bring a simple craft and hang out' },
+          { title: 'DIY Terrarium Building', desc: 'Create mini ecosystems together' },
+          { title: 'Paint & Sip Night', desc: 'Grab canvases and wine, create art' },
+        ],
+        'chill-social': [
+          { title: 'Board-Game Café', desc: 'Low-rules games like Sushi Go! or Just One' },
+          { title: 'Coffee & Conversation', desc: 'Deep talks at a cozy café' },
+          { title: 'Puzzle Night', desc: 'Work together on jigsaw puzzles' },
+          { title: 'Trivia Night', desc: 'Test knowledge over drinks' },
+        ],
+        'lowkey-game': [
+          { title: 'Low-rules party game', desc: 'Simple games everyone can join' },
+          { title: 'Card game + snacks', desc: 'Light card games with food' },
+          { title: 'Trivia mini-pack', desc: 'DIY trivia with snack breaks' },
+          { title: 'Co-op One Shot', desc: '45-min co-op like The Crew' },
+        ],
+        'mini-adventure': [
+          { title: 'Sunset Walk', desc: 'Pick a scenic loop; finish with gelato' },
+          { title: 'Photo Quest', desc: 'List 10 shots to capture; compare albums' },
+          { title: 'Micro-Geocache', desc: 'Find one cache; celebrate at a café' },
+          { title: 'Neighborhood Explore', desc: 'Discover new spots in your area' },
+        ],
+        'talk-taste': [
+          { title: 'Wine + Cards', desc: 'Light card games with snacks' },
+          { title: 'Neighborhood Bites', desc: 'Two small plates across two spots' },
+          { title: 'Cooking Class & Market Tour', desc: 'Shop for ingredients then cook together' },
+          { title: 'Craft Beer & Local History', desc: 'Brewery tour with neighborhood walk' },
+        ],
+        'music-mingle': [
+          { title: 'Playlist Potluck', desc: 'Everyone brings 3 tracks; vote a vibe winner' },
+          { title: 'Tiny Karaoke', desc: 'Phone + speaker; draft a 5-song set' },
+          { title: 'Open-Mic Scout', desc: 'Check a local open mic or jazz night' },
+          { title: 'Live Music Venue Crawl', desc: 'Hit 2-3 venues with different styles' },
+        ],
+        'active-outdoor': [
+          { title: 'Hiking Trail Discovery', desc: 'Explore new trails and scenic viewpoints' },
+          { title: 'Beach Volleyball & BBQ', desc: 'Active games followed by beachside grilling' },
+          { title: 'Bike Tour & Food Trucks', desc: 'Cycle to different food truck locations' },
+          { title: 'Rock Climbing & Brewery', desc: 'Indoor climbing followed by craft beer' },
+        ],
+        'late-night': [
+          { title: 'Dessert Run', desc: 'Late-night sweets + street stroll' },
+          { title: 'Night Views', desc: 'Find a skyline spot; bring a speaker' },
+          { title: 'After-Hours Games', desc: 'Short party games (Just One, Spyfall)' },
+          { title: 'Midnight Coding Session', desc: 'Collaborative project with snacks' },
+        ],
+      };
+      
+      // Find matching fallback suggestions
+      let matchedSuggestions: Array<{ title: string; desc?: string }> = [];
+      
+      // Check for exact match
+      if (fallbackSuggestions[key]) {
+        matchedSuggestions = fallbackSuggestions[key];
       } else {
-        suggestions = [{ title:'Cook + Movie Night' },{ title:'Playlist Potluck' },{ title:'Dessert Run' }];
+        // Check for partial match (e.g., "cozy-creative" in "cozy-creative|chill-social")
+        const keyParts = key.includes('|') ? key.split('|') : [key];
+        for (const part of keyParts) {
+          if (fallbackSuggestions[part]) {
+            matchedSuggestions = fallbackSuggestions[part];
+            break;
+          }
+        }
       }
+      
+      // If still no match, use generic suggestions
+      if (matchedSuggestions.length === 0) {
+        if (key.includes('game')) {
+          matchedSuggestions = fallbackSuggestions['lowkey-game'] || [];
+        } else if (key.includes('outdoor') || key.includes('adventure')) {
+          matchedSuggestions = fallbackSuggestions['mini-adventure'] || [];
+        } else {
+          // Default to cozy-creative style suggestions
+          matchedSuggestions = fallbackSuggestions['cozy-creative'] || [];
+        }
+      }
+      
+      // Shuffle and take 3-5 suggestions for variety
+      const shuffled = [...matchedSuggestions].sort(() => Math.random() - 0.5);
+      suggestions = shuffled.slice(0, Math.min(5, shuffled.length));
     }
   }
 
