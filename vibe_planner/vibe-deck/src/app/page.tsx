@@ -193,16 +193,16 @@ export default function HomePage() {
   // Host swiping flow (after creating session)
   if (isHostSwiping && hostSessionData) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-purple-400 via-pink-500 to-orange-400 relative overflow-hidden">
+      <div className="min-h-screen bg-gradient-to-br from-indigo-600 via-purple-700 to-blue-800 relative overflow-hidden">
         {/* Animated background elements */}
         <div className="absolute inset-0 overflow-hidden">
-          <div className="absolute -top-40 -right-40 w-80 h-80 bg-purple-300 rounded-full mix-blend-multiply filter blur-xl opacity-20 animate-blob"></div>
-          <div className="absolute -bottom-40 -left-40 w-80 h-80 bg-pink-300 rounded-full mix-blend-multiply filter blur-xl opacity-20 animate-blob animation-delay-2000"></div>
-          <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-80 h-80 bg-orange-300 rounded-full mix-blend-multiply filter blur-xl opacity-20 animate-blob animation-delay-4000"></div>
+          <div className="absolute -top-40 -right-40 w-80 h-80 bg-indigo-400 rounded-full mix-blend-multiply filter blur-xl opacity-20 animate-blob"></div>
+          <div className="absolute -bottom-40 -left-40 w-80 h-80 bg-purple-400 rounded-full mix-blend-multiply filter blur-xl opacity-20 animate-blob animation-delay-2000"></div>
+          <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-80 h-80 bg-blue-400 rounded-full mix-blend-multiply filter blur-xl opacity-20 animate-blob animation-delay-4000"></div>
         </div>
         <ToastContainer />
         <div className="container mx-auto px-4 py-8 relative z-10">
-          <div className="text-center mb-8 bg-white/70 backdrop-blur-xl border border-white/30 shadow-2xl shadow-purple-500/10 rounded-2xl p-8">
+          <div className="text-center mb-8 bg-white/70 backdrop-blur-xl border border-white/30 shadow-2xl shadow-indigo-500/10 rounded-2xl p-8">
             <h1 className="text-4xl font-bold text-gray-900 mb-3 drop-shadow-lg">
               Let's find your vibe first! 🎯
             </h1>
@@ -224,16 +224,16 @@ export default function HomePage() {
   // Solo swiping (exploratory)
   if (isSwiping) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-purple-400 via-pink-500 to-orange-400 relative overflow-hidden">
+      <div className="min-h-screen bg-gradient-to-br from-indigo-600 via-purple-700 to-blue-800 relative overflow-hidden">
         {/* Animated background elements */}
         <div className="absolute inset-0 overflow-hidden">
-          <div className="absolute -top-40 -right-40 w-80 h-80 bg-purple-300 rounded-full mix-blend-multiply filter blur-xl opacity-20 animate-blob"></div>
-          <div className="absolute -bottom-40 -left-40 w-80 h-80 bg-pink-300 rounded-full mix-blend-multiply filter blur-xl opacity-20 animate-blob animation-delay-2000"></div>
-          <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-80 h-80 bg-orange-300 rounded-full mix-blend-multiply filter blur-xl opacity-20 animate-blob animation-delay-4000"></div>
+          <div className="absolute -top-40 -right-40 w-80 h-80 bg-indigo-400 rounded-full mix-blend-multiply filter blur-xl opacity-20 animate-blob"></div>
+          <div className="absolute -bottom-40 -left-40 w-80 h-80 bg-purple-400 rounded-full mix-blend-multiply filter blur-xl opacity-20 animate-blob animation-delay-2000"></div>
+          <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-80 h-80 bg-blue-400 rounded-full mix-blend-multiply filter blur-xl opacity-20 animate-blob animation-delay-4000"></div>
         </div>
         <ToastContainer />
         <div className="container mx-auto px-4 py-8 relative z-10">
-          <div className="text-center mb-8 bg-white/70 backdrop-blur-xl border border-white/30 shadow-2xl shadow-purple-500/10 rounded-2xl p-8">
+          <div className="text-center mb-8 bg-white/70 backdrop-blur-xl border border-white/30 shadow-2xl shadow-indigo-500/10 rounded-2xl p-8">
             <h1 className="text-4xl font-bold text-gray-900 mb-3 drop-shadow-lg">
               Find Your Vibe
             </h1>
@@ -254,16 +254,16 @@ export default function HomePage() {
 
   if (results) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-purple-400 via-pink-500 to-orange-400 relative overflow-hidden">
+      <div className="min-h-screen bg-gradient-to-br from-indigo-600 via-purple-700 to-blue-800 relative overflow-hidden">
         {/* Animated background elements */}
         <div className="absolute inset-0 overflow-hidden">
-          <div className="absolute -top-40 -right-40 w-80 h-80 bg-purple-300 rounded-full mix-blend-multiply filter blur-xl opacity-20 animate-blob"></div>
-          <div className="absolute -bottom-40 -left-40 w-80 h-80 bg-pink-300 rounded-full mix-blend-multiply filter blur-xl opacity-20 animate-blob animation-delay-2000"></div>
-          <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-80 h-80 bg-orange-300 rounded-full mix-blend-multiply filter blur-xl opacity-20 animate-blob animation-delay-4000"></div>
+          <div className="absolute -top-40 -right-40 w-80 h-80 bg-indigo-400 rounded-full mix-blend-multiply filter blur-xl opacity-20 animate-blob"></div>
+          <div className="absolute -bottom-40 -left-40 w-80 h-80 bg-purple-400 rounded-full mix-blend-multiply filter blur-xl opacity-20 animate-blob animation-delay-2000"></div>
+          <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-80 h-80 bg-blue-400 rounded-full mix-blend-multiply filter blur-xl opacity-20 animate-blob animation-delay-4000"></div>
         </div>
         <ToastContainer />
         <div className="container mx-auto px-4 py-8 max-w-2xl relative z-10">
-          <div className="text-center mb-8 bg-white/70 backdrop-blur-xl border border-white/30 shadow-2xl shadow-purple-500/10 rounded-2xl p-8">
+          <div className="text-center mb-8 bg-white/70 backdrop-blur-xl border border-white/30 shadow-2xl shadow-indigo-500/10 rounded-2xl p-8">
             <h1 className="text-4xl font-bold text-gray-900 mb-3 drop-shadow-lg">
               Your Vibe Profile
             </h1>
@@ -273,7 +273,7 @@ export default function HomePage() {
           </div>
 
           <div className="space-y-6">
-            <Card className="bg-white/70 backdrop-blur-xl border border-white/30 shadow-2xl shadow-purple-500/10 rounded-2xl">
+            <Card className="bg-white/70 backdrop-blur-xl border border-white/30 shadow-2xl shadow-indigo-500/10 rounded-2xl">
               <CardHeader>
                 <CardTitle className="text-gray-900">Your Top Vibes</CardTitle>
               </CardHeader>
@@ -282,10 +282,10 @@ export default function HomePage() {
                   {results.topVibes.map((vibeId, index) => (
                     <div
                       key={vibeId}
-                      className="flex items-center justify-between p-4 bg-white/60 backdrop-blur-md rounded-xl border border-white/20 hover:bg-white/80 transition-all shadow-lg shadow-purple-500/10"
+                      className="flex items-center justify-between p-4 bg-white/60 backdrop-blur-md rounded-xl border border-white/20 hover:bg-white/80 transition-all shadow-lg shadow-indigo-500/10"
                     >
                       <div className="flex items-center space-x-3">
-                        <Badge variant="secondary" className="bg-purple-500/80 backdrop-blur-sm text-white">{index + 1}</Badge>
+                        <Badge variant="secondary" className="bg-indigo-500/80 backdrop-blur-sm text-white">{index + 1}</Badge>
                         <span className="font-medium text-gray-900">{vibeId}</span>
                       </div>
                       <Badge
@@ -300,7 +300,7 @@ export default function HomePage() {
               </CardContent>
             </Card>
 
-            <Card className="bg-white/70 backdrop-blur-xl border border-white/30 shadow-2xl shadow-purple-500/10 rounded-2xl">
+            <Card className="bg-white/70 backdrop-blur-xl border border-white/30 shadow-2xl shadow-indigo-500/10 rounded-2xl">
               <CardHeader>
                 <CardTitle className="text-gray-900">All Your Swipes</CardTitle>
               </CardHeader>
@@ -323,10 +323,10 @@ export default function HomePage() {
             </Card>
 
             <div className="flex justify-center space-x-4">
-              <Button onClick={handleReset} className="bg-white/80 backdrop-blur-xl border border-white/30 hover:bg-white/90 shadow-lg shadow-purple-500/20 text-gray-900 font-semibold">
+              <Button onClick={handleReset} className="bg-white/80 backdrop-blur-xl border border-white/30 hover:bg-white/90 shadow-lg shadow-indigo-500/20 text-gray-900 font-semibold">
                 Try Again
               </Button>
-              <Button onClick={() => handleCreateGroupSession()} className="bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 text-white shadow-lg shadow-purple-500/30">
+              <Button onClick={() => handleCreateGroupSession()} className="bg-gradient-to-r from-indigo-500 to-blue-500 hover:from-indigo-600 hover:to-blue-600 text-white shadow-lg shadow-indigo-500/30">
                 Create Group Session
               </Button>
             </div>
@@ -337,12 +337,12 @@ export default function HomePage() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-purple-400 via-pink-500 to-orange-400 relative overflow-hidden">
+    <div className="min-h-screen bg-gradient-to-br from-indigo-600 via-purple-700 to-blue-800 relative overflow-hidden">
       {/* Animated background elements */}
       <div className="absolute inset-0 overflow-hidden">
-        <div className="absolute -top-40 -right-40 w-80 h-80 bg-purple-300 rounded-full mix-blend-multiply filter blur-xl opacity-20 animate-blob"></div>
-        <div className="absolute -bottom-40 -left-40 w-80 h-80 bg-pink-300 rounded-full mix-blend-multiply filter blur-xl opacity-20 animate-blob animation-delay-2000"></div>
-        <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-80 h-80 bg-orange-300 rounded-full mix-blend-multiply filter blur-xl opacity-20 animate-blob animation-delay-4000"></div>
+        <div className="absolute -top-40 -right-40 w-80 h-80 bg-indigo-400 rounded-full mix-blend-multiply filter blur-xl opacity-20 animate-blob"></div>
+        <div className="absolute -bottom-40 -left-40 w-80 h-80 bg-purple-400 rounded-full mix-blend-multiply filter blur-xl opacity-20 animate-blob animation-delay-2000"></div>
+        <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-80 h-80 bg-blue-400 rounded-full mix-blend-multiply filter blur-xl opacity-20 animate-blob animation-delay-4000"></div>
       </div>
       <ToastContainer />
       <div className="container mx-auto px-4 py-8 max-w-4xl relative z-10">
@@ -360,28 +360,28 @@ export default function HomePage() {
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-8">
           <Button
             onClick={() => handleCreateGroupSession()}
-            className="h-24 text-lg flex flex-col items-center justify-center gap-2 bg-white/80 backdrop-blur-xl border border-white/30 shadow-2xl shadow-purple-500/20 hover:bg-white/90 hover:shadow-purple-500/30 transition-all"
+            className="h-24 text-lg flex flex-col items-center justify-center gap-2 bg-white/80 backdrop-blur-xl border border-white/30 shadow-2xl shadow-indigo-500/20 hover:bg-white/90 hover:shadow-indigo-500/30 transition-all"
             size="lg"
           >
-            <Plus className="h-6 w-6 text-purple-600" />
+            <Plus className="h-6 w-6 text-indigo-400" />
             <span className="text-gray-900 font-semibold">Create Session</span>
           </Button>
           <Button
             onClick={handleStartSolo}
-            className="h-24 text-lg flex flex-col items-center justify-center gap-2 bg-white/80 backdrop-blur-xl border border-white/30 shadow-2xl shadow-pink-500/20 hover:bg-white/90 hover:shadow-pink-500/30 transition-all"
+            className="h-24 text-lg flex flex-col items-center justify-center gap-2 bg-white/80 backdrop-blur-xl border border-white/30 shadow-2xl shadow-blue-500/20 hover:bg-white/90 hover:shadow-blue-500/30 transition-all"
             size="lg"
           >
-            <Sparkles className="h-6 w-6 text-pink-600" />
+            <Sparkles className="h-6 w-6 text-blue-400" />
             <span className="text-gray-900 font-semibold">Try Solo</span>
           </Button>
         </div>
 
         {/* Your Groups */}
-        <Card className="mb-8 bg-white/70 backdrop-blur-xl border border-white/30 shadow-2xl shadow-purple-500/10 rounded-2xl">
+        <Card className="mb-8 bg-white/70 backdrop-blur-xl border border-white/30 shadow-2xl shadow-indigo-500/10 rounded-2xl">
           <CardHeader>
             <div className="flex items-center justify-between">
               <CardTitle className="flex items-center gap-2 text-gray-900">
-                <Users className="h-5 w-5 text-purple-600" />
+                <Users className="h-5 w-5 text-indigo-400" />
                 Your Groups
               </CardTitle>
               {groups.length > 0 && (
@@ -411,14 +411,14 @@ export default function HomePage() {
             ) : (
               <>
                 {showCreateGroup && (
-                  <div className="mb-4 p-4 bg-white/60 backdrop-blur-md rounded-xl border border-white/30 shadow-lg shadow-purple-500/10">
+                  <div className="mb-4 p-4 bg-white/60 backdrop-blur-md rounded-xl border border-white/30 shadow-lg shadow-indigo-500/10">
                     <input
                       type="text"
                       placeholder="Group name (e.g., Friday Night Crew)"
                       value={newGroupName}
                       onChange={(e) => setNewGroupName(e.target.value)}
                       onKeyPress={(e) => e.key === 'Enter' && handleCreateGroup()}
-                      className="w-full px-4 py-3 bg-white/80 backdrop-blur-sm border border-white/40 rounded-xl mb-3 text-gray-900 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-purple-500/50 focus:border-purple-500/50"
+                      className="w-full px-4 py-3 bg-white/80 backdrop-blur-sm border border-white/40 rounded-xl mb-3 text-gray-900 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-indigo-500/50 focus:border-indigo-500/50"
                     />
                     <div className="flex gap-2">
                       <Button onClick={handleCreateGroup} size="sm">
@@ -441,7 +441,7 @@ export default function HomePage() {
                   {groups.map((group) => (
                     <Card
                       key={group.id}
-                      className="hover:shadow-xl hover:shadow-purple-500/20 transition-all cursor-pointer bg-white/80 backdrop-blur-xl border border-white/30 shadow-lg shadow-purple-500/10 rounded-xl hover:scale-[1.02]"
+                      className="hover:shadow-xl hover:shadow-indigo-500/20 transition-all cursor-pointer bg-white/80 backdrop-blur-xl border border-white/30 shadow-lg shadow-indigo-500/10 rounded-xl hover:scale-[1.02]"
                       onClick={() => handleCreateGroupSession(group.id)}
                     >
                       <CardContent className="p-4">
@@ -477,7 +477,7 @@ export default function HomePage() {
                           )}
                         </div>
                         <Button
-                          className="w-full mt-3 bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 text-white shadow-lg shadow-purple-500/30"
+                          className="w-full mt-3 bg-gradient-to-r from-indigo-500 to-blue-500 hover:from-indigo-600 hover:to-blue-600 text-white shadow-lg shadow-indigo-500/30"
                           size="sm"
                           onClick={(e) => {
                             e.stopPropagation();
@@ -508,10 +508,10 @@ export default function HomePage() {
 
         {/* Recent Sessions */}
         {sessionHistory.length > 0 && (
-          <Card className="bg-white/70 backdrop-blur-xl border border-white/30 shadow-2xl shadow-purple-500/10 rounded-2xl">
+          <Card className="bg-white/70 backdrop-blur-xl border border-white/30 shadow-2xl shadow-indigo-500/10 rounded-2xl">
             <CardHeader>
               <CardTitle className="flex items-center gap-2 text-gray-900">
-                <Clock className="h-5 w-5 text-purple-600" />
+                <Clock className="h-5 w-5 text-indigo-400" />
                 Recent Activity
               </CardTitle>
             </CardHeader>
@@ -520,7 +520,7 @@ export default function HomePage() {
                 {sessionHistory.slice(0, 5).map((session) => (
                   <div
                     key={session.sessionId}
-                    className="flex items-center justify-between p-4 bg-white/60 backdrop-blur-md rounded-xl hover:bg-white/80 transition-all cursor-pointer border border-white/20 hover:border-white/40 hover:shadow-lg shadow-purple-500/10"
+                    className="flex items-center justify-between p-4 bg-white/60 backdrop-blur-md rounded-xl hover:bg-white/80 transition-all cursor-pointer border border-white/20 hover:border-white/40 hover:shadow-lg shadow-indigo-500/10"
                     onClick={() => router.push(`/sync/${session.sessionId}`)}
                   >
                     <div className="flex items-center gap-3">
@@ -553,10 +553,10 @@ export default function HomePage() {
 
         {/* Quick Tips */}
         {sessionHistory.length === 0 && groups.length === 0 && (
-          <Card className="mt-8 bg-white/70 backdrop-blur-xl border border-white/30 shadow-2xl shadow-purple-500/10 rounded-2xl">
+          <Card className="mt-8 bg-white/70 backdrop-blur-xl border border-white/30 shadow-2xl shadow-indigo-500/10 rounded-2xl">
             <CardContent className="p-6">
               <div className="flex items-start gap-3">
-                <Sparkles className="h-5 w-5 text-purple-600 mt-0.5" />
+                <Sparkles className="h-5 w-5 text-indigo-400 mt-0.5" />
                 <div>
                   <h3 className="font-semibold text-gray-900 mb-2">
                     Quick Tips

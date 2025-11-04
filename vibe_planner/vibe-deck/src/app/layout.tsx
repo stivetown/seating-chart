@@ -31,9 +31,9 @@ export default function RootLayout({
         <PostHogProvider>
           <div className="min-h-screen flex flex-col">
             {/* Brand Bar */}
-            <header className="bg-white/70 backdrop-blur-xl border-b border-white/30 shadow-lg shadow-purple-500/5 px-4 py-3 sticky top-0 z-50">
+            <header className="bg-white/70 backdrop-blur-xl border-b border-white/30 shadow-lg shadow-indigo-500/5 px-4 py-3 sticky top-0 z-50">
               <div className="container mx-auto flex items-center justify-between">
-                <h1 className="text-xl font-bold bg-gradient-to-r from-purple-600 to-pink-600 bg-clip-text text-transparent">Vibe Deck</h1>
+                <h1 className="text-xl font-bold bg-gradient-to-r from-indigo-500 to-blue-500 bg-clip-text text-transparent">Vibe Deck</h1>
                 <div className="text-sm text-gray-600 font-medium">Swipe • Sync • Plan</div>
               </div>
             </header>

@@ -37,7 +37,7 @@ function VibeCard({ vibe, index, total, onSwipe, isTop }: VibeCardProps) {
 
     switch (energy) {
       case 'low':
-        return 'from-purple-50 to-pink-50';
+        return 'from-indigo-50 to-blue-50';
       case 'high':
         return 'from-orange-50 to-red-50';
       default:
@@ -115,7 +115,7 @@ function VibeCard({ vibe, index, total, onSwipe, isTop }: VibeCardProps) {
         damping: 30,
       }}
     >
-      <Card className="h-full w-full cursor-grab active:cursor-grabbing bg-white/80 backdrop-blur-xl border border-white/30 shadow-2xl shadow-purple-500/20 rounded-2xl">
+      <Card className="h-full w-full cursor-grab active:cursor-grabbing bg-white/80 backdrop-blur-xl border border-white/30 shadow-2xl shadow-indigo-500/20 rounded-2xl">
         <CardContent className="h-full p-6">
           <div
             className={`h-full rounded-xl bg-gradient-to-br ${getEnergyGradient(vibe.tags)} p-6 flex flex-col justify-between backdrop-blur-sm`}
