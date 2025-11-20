@@ -1,0 +1,173 @@
+// Multi-tenant matchmaking admin database schema
+// Designed for flexibility across different client data schemas
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// Tenants (clients like Freeda)
+model Tenant {
+  id          String   @id @default(cuid())
+  name        String   // e.g., "Freeda"
+  slug        String   @unique // e.g., "freeda" - used in subdomain/routing
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  
+  // Client-specific configuration
+  config      Json?    // Styling, feature flags, etc.
+  
+  // Relations
+  users       User[]
+  members     Member[]
+  groups      Group[]
+  imports     Import[]
+  weights     MatchingWeight[]
+  history     HistoryEntry[]
+  
+  @@index([slug])
+}
+
+// Users (admins who can access the platform)
+model User {
+  id        String   @id @default(cuid())
+  email     String   @unique
+  name      String?
+  password  String   // Hashed password
+  role      String   @default("admin") // admin, super_admin
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  
+  // Multi-tenant: users can belong to multiple tenants
+  tenantId  String?
+  tenant    Tenant?  @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  
+  @@index([email])
+  @@index([tenantId])
+}
+
+// CSV Import tracking
+model Import {
+  id          String   @id @default(cuid())
+  tenantId    String
+  tenant      Tenant   @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  
+  fileName    String
+  status      String   // pending, processing, completed, failed
+  totalRows   Int      @default(0)
+  importedRows Int     @default(0)
+  errorRows   Int      @default(0)
+  errors      Json?    // Array of error messages
+  
+  // Column mapping configuration (flexible schema)
+  columnMapping Json   // Maps CSV columns to member attributes
+  
+  createdAt   DateTime @default(now())
+  completedAt DateTime?
+  
+  members     Member[]
+  
+  @@index([tenantId])
+  @@index([status])
+}
+
+// Members - flexible schema using JSON for attributes
+model Member {
+  id          String   @id @default(cuid())
+  tenantId    String
+  tenant      Tenant   @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  
+  importId    String?
+  import      Import?  @relation(fields: [importId], references: [id], onDelete: SetNull)
+  
+  // Flexible attributes stored as JSON
+  // This allows different clients to have completely different data structures
+  attributes  Json     // e.g., { name: "John", age: 30, location: "NYC", ... }
+  
+  // Group assignment
+  groupId     String?
+  group       Group?   @relation(fields: [groupId], references: [id], onDelete: SetNull)
+  
+  // Matching metadata
+  fitScore    Float?   // Fit score for current group
+  isMatched   Boolean  @default(false)
+  
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  
+  @@index([tenantId])
+  @@index([groupId])
+  @@index([isMatched])
+}
+
+// Groups of matched members
+model Group {
+  id          String   @id @default(cuid())
+  tenantId    String
+  tenant      Tenant   @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  
+  name        String?
+  description String?
+  
+  // Group metadata
+  averageFitScore Float? // Average fit score of all members
+  diversityScore  Float? // Diversity metric
+  
+  members     Member[]
+  
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  
+  @@index([tenantId])
+}
+
+// Matching weights configuration (per tenant)
+model MatchingWeight {
+  id          String   @id @default(cuid())
+  tenantId    String
+  tenant      Tenant   @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  
+  // Attribute path in the JSON (e.g., "age", "location", "interests.hobbies")
+  attributePath String
+  
+  // Weight for matching (0.0 to 1.0)
+  weight      Float    @default(0.5)
+  
+  // Matching type: exact, range, similarity, etc.
+  matchType   String   @default("similarity")
+  
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  
+  @@unique([tenantId, attributePath])
+  @@index([tenantId])
+}
+
+// History tracking for undo/redo
+model HistoryEntry {
+  id          String   @id @default(cuid())
+  tenantId    String
+  tenant      Tenant   @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  
+  action      String   // create_group, move_member, update_weights, etc.
+  entityType  String   // group, member, weight, etc.
+  entityId    String   // ID of the affected entity
+  
+  // Snapshot of state before action
+  beforeState Json?
+  // Snapshot of state after action
+  afterState  Json?
+  
+  userId      String?  // User who performed the action
+  description String?
+  
+  createdAt   DateTime @default(now())
+  
+  @@index([tenantId, createdAt])
+  @@index([tenantId, entityType, entityId])
+}
+
